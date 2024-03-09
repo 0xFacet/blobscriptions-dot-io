@@ -6,9 +6,9 @@ import { Web3OnboardProvider } from '@web3-onboard/react'
 const injected = injectedModule()
 const chains = [
   {
-    id: '0xaa36a7',
+    id: '0x4268',
     token: 'ETH',
-    label: 'Sepolia',
+    label: 'Holesky',
   },
 ]
 const web3Onboard = init({
