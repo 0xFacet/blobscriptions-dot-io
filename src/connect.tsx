@@ -23,8 +23,8 @@ export default function ConnectButton() {
       "params": ['0x1', 'latest', [0.5]]
     }) as any
     console.log('tip', tip)
-    const common = new Common({ chain: Chain.Sepolia, hardfork: Hardfork.Cancun , customCrypto: { kzg }})
-    const blobTx = BlobEIP4844Transaction.fromTxData({ nonce: 0x0, blobsData: ['hello world'], to: '0xff00000000000000000000000000000000074248', gasLimit: 0x5208, maxFeePerGas: parseInt(tip.baseFeePerGas[0] + 5), maxFeePerBlobGas: 0xf, maxPriorityFeePerGas: parseInt(tip.reward[0])}, { common })
+    const common = new Common({ chain: Chain.Holesky, hardfork: Hardfork.Cancun , customCrypto: { kzg }})
+    const blobTx = BlobEIP4844Transaction.fromTxData({ nonce: 0x0, blobsData: ['hello from browser'], to: '0xff00000000000000000000000000000000074248', gasLimit: 0x5208, maxFeePerGas: parseInt(tip.baseFeePerGas[0] + 5), maxFeePerBlobGas: 0xffff, maxPriorityFeePerGas: parseInt(tip.reward[0])}, { common })
 
     const r = randomBytes(32)
     let s = randomBytes(32)
@@ -32,9 +32,14 @@ export default function ConnectButton() {
       s = randomBytes(32)
     }
     const v = 0n
-    const signedTx = blobTx?.addSignature(v, r, s)
-    console.log(signedTx.getSenderAddress().toString())
-    const upFrontCost = blobTx.getUpfrontCost(BigInt(tip.baseFeePerGas[1])) * 2n
+    let signedTx 
+    let done = false
+    while (!done) {
+        signedTx = blobTx?.addSignature(v, r, s)
+        done = signedTx.verifySignature()
+        console.log('tx is valid', done)
+    }
+    const upFrontCost = blobTx.getUpfrontCost(BigInt(tip.baseFeePerGas[1])) * 1000n
     const maxFee = parseInt(tip.baseFeePerGas[1]) > parseInt(tip.reward[0]) ? parseInt(tip.baseFeePerGas[1]) : parseInt(tip.reward[0])
     const nonce = await wallet!.provider.request({
       "method": "eth_getTransactionCount",
@@ -46,7 +51,7 @@ export default function ConnectButton() {
       "params": [{...tx.toJSON(), ...{"from": wallet?.accounts[0].address}} ]
     })
     console.log('tx hash', res)
-    let done = false
+    done = false
     while (!done) {
       console.log('lets get a transaction receipt')
       const receipt = await wallet?.provider.request({
