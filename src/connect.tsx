@@ -1,3 +1,4 @@
+import { Block } from '@ethereumjs/block'
 import { Chain, Common, Hardfork } from '@ethereumjs/common'
 import { BlobEIP4844Transaction, FeeMarketEIP1559Transaction } from '@ethereumjs/tx'
 import { Kzg, SECP256K1_ORDER_DIV_2, bytesToBigInt, bytesToHex, initKZG, randomBytes } from '@ethereumjs/util'
@@ -22,9 +23,13 @@ export default function ConnectButton() {
       "method": "eth_feeHistory",
       "params": ['0x1', 'latest', [0.5]]
     }) as any
+    const blockData = await wallet!.provider.request({
+      "method": "eth_getBlockByNumber", "params": ["latest", false]
+    }) as any
     console.log('tip', tip)
     const common = new Common({ chain: Chain.Holesky, hardfork: Hardfork.Cancun , customCrypto: { kzg }})
-    const blobTx = BlobEIP4844Transaction.fromTxData({ nonce: 0x0, blobsData: ['hello from browser'], to: '0xff00000000000000000000000000000000074248', gasLimit: 0x5208, maxFeePerGas: parseInt(tip.baseFeePerGas[0] + 5), maxFeePerBlobGas: 0xffff, maxPriorityFeePerGas: parseInt(tip.reward[0])}, { common })
+    const block = Block.fromRPC(blockData, undefined, { common })
+    const blobTx = BlobEIP4844Transaction.fromTxData({ nonce: 0x0, blobsData: ['hello from browser again'], to: '0xff00000000000000000000000000000000074248', gasLimit: 0x5208, maxFeePerGas: parseInt(tip.baseFeePerGas[0] + 5), maxFeePerBlobGas: block.header.getBlobGasPrice(), maxPriorityFeePerGas: parseInt(tip.reward[0])}, { common })
 
     const r = randomBytes(32)
     let s = randomBytes(32)

@@ -15,7 +15,7 @@ export default defineConfig({
   resolve: {
     alias: {
       events: 'eventemitter3',
-      'node:stream/web': 'web-streams-polyfill/es2018',
+      'node:stream/web': 'web-streams-polyfill',
     },
   },
 })
