@@ -19,7 +19,9 @@ const web3Onboard = init({
 function App() {
   return (
     <>
-      Hello
+      <h1>Blobs 4 Every 1</h1>
+      
+      If you've ever wanted to create your own blob, today is your day.
       <Web3OnboardProvider web3Onboard={web3Onboard}>
           <ConnectButton />
       </Web3OnboardProvider>
