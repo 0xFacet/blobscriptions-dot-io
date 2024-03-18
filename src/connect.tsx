@@ -57,7 +57,13 @@ export default function ConnectButton() {
   const [cborData, setCborData] = useState<Uint8Array | null>(null);
   const [blobData, setBlobData] = useState<any>(null);
   const [privateKey, setPrivateKey] = useState<string | null>('')
-  const pkAddress = privateKey && privateKeyToAccount(privateKey as `0x${string}`).address
+  
+  let pkAddress;
+  try {
+    pkAddress = privateKey ? privateKeyToAccount(privateKey as `0x${string}`).address : undefined;
+  } catch (error) {
+    pkAddress = undefined; // or handle the error as needed
+  }
   
   const [publicClient, setPublicClient] = useState<any>(null)
   
