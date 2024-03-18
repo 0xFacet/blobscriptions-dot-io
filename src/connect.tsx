@@ -6,6 +6,9 @@ import { createKZG } from 'kzg-wasm'
 import { useEffect, useState } from 'react'
 import { BIGINT_0, BIGINT_1 } from '@ethereumjs/util'
 import Markdown from 'react-markdown'
+import { Button } from './components/button'
+import { Input } from './components/input'
+import { Textarea } from './components/textarea'
 
 
 import { createWalletClient, http, parseGwei, stringToHex, toBlobs } from 'viem';
@@ -205,7 +208,7 @@ export default function ConnectButton() {
     <div className="flex flex-col gap-4 mt-12">
       <h1 className="text-2xl font-semibold">Welcome to BlobScriptions!</h1>
       <Markdown>{intro}</Markdown>
-      <button className="w-max" onClick={() => setShowFaq(i => !i)}>{showFaq ? 'Hide' : 'Show'} FAQ</button>
+      <Button className="w-max" onClick={() => setShowFaq(i => !i)}>{showFaq ? 'Hide' : 'Show'} FAQ</Button>
       {showFaq && <div>
         <Markdown>{faq}</Markdown>
       </div>}
@@ -213,47 +216,47 @@ export default function ConnectButton() {
       <div className="flex flex-col gap-6">
       <h3 className="text-lg font-semibold">Step 1: Enter a "burner" private key</h3>
       <p>It is not currently possible to create BlobScriptions using a wallet like MetaMask. You must use a private key directly. Create a fresh wallet and send $20 or so to it for gas. Click the button below to do it automatically. Save the private key so you can do multiple BlobScriptions from the same burner.</p>
-      <button
+      <Button
       
       onClick={() => setPrivateKey(generatePrivateKey())}
-      className="w-max">Create a burner for me</button>
+      className="w-max">Create a burner for me</Button>
       
       <div className="flex flex-col gap-1">
-      <input
+      <Input
         type="text"
         size={74}
         value={privateKey || ''}
         onChange={(e) => setPrivateKey(e.target.value)}
         placeholder="0x..."
-        className="p-2 rounded-md border border-gray-500 focus:outline-none"
-      ></input>
+        // className="p-2 rounded-md border border-gray-500 focus:outline-none"
+      ></Input>
       {pkAddress && <p className="text-sm">Your burner address is {pkAddress}</p>}
       </div>
       <h3 className="text-lg font-semibold">Step 2: Enter the BlobScription's initial owner</h3>
-      <input
+      <Input
         type="text"
         size={74}
         value={ethscriptionInitialOwner || ''}
         placeholder="0x..."
         onChange={(e) => setEthscriptionInitialOwner(e.target.value)}
-        className="p-2 rounded-md border border-gray-500 focus:outline-none"
-      ></input>
+        // className="p-2 rounded-md border border-gray-500 focus:outline-none"
+      ></Input>
       
-      <h4 className="font-semibold">Optional: Enter a message for the calldata</h4>
+      {/* <h4 className="font-semibold">Optional: Enter a message for the calldata</h4>
       
-      <textarea
+      <Textarea
       value={calldataText}
       onChange={(e) => setCalldataText(e.target.value)}
-      className="p-2 rounded-md border border-gray-500 focus:outline-none w-1/2"
+      // className="p-2 rounded-md border border-gray-500 focus:outline-none w-1/2"
 
       >
         
-      </textarea>
+      </Textarea> */}
       
       <h3 className="text-lg font-semibold">Step 3: Pick a file</h3>
       <FilePickerAndCompressor onCompress={handleCompressedData} />
       
-      <button className="w-max mx-auto" disabled={!!loading || !client || !blobData} onClick={doBlob}>Step 4: Create Blobscription</button>
+      <Button className="w-max mx-auto text-4xl" disabled={!!loading || !client || !blobData} onClick={doBlob}>Step 4: Create Blobscription</Button>
       
       {hash && <div>
         <h3>Blob tx sent! Once it has been included in a block, your BlobScription will appear in the list below shortly.</h3>
