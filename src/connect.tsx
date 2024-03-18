@@ -215,7 +215,7 @@ export default function ConnectButton() {
       <h1 className="text-2xl font-semibold">Create a BlobScription</h1>
       <div className="flex flex-col gap-6">
       <h3 className="text-lg font-semibold">Step 1: Enter a "burner" private key</h3>
-      <p>It is not currently possible to create BlobScriptions using a wallet like MetaMask. You must use a private key directly. Create a fresh wallet and send $20 or so to it for gas. Click the button below to do it automatically. Save the private key so you can do multiple BlobScriptions from the same burner.</p>
+      <p className="">It is not currently possible to create BlobScriptions using a wallet like MetaMask. You must use a private key directly. Create a fresh wallet and send $20 or so to it for gas. Click the button below to do it automatically. Save the private key so you can do multiple BlobScriptions from the same burner.</p>
       <Button
       
       onClick={() => setPrivateKey(generatePrivateKey())}
@@ -227,7 +227,7 @@ export default function ConnectButton() {
         size={74}
         value={privateKey || ''}
         onChange={(e) => setPrivateKey(e.target.value)}
-        placeholder="0x..."
+        placeholder="Private key (0x...)"
         // className="p-2 rounded-md border border-gray-500 focus:outline-none"
       ></Input>
       {pkAddress && <p className="text-sm">Your burner address is {pkAddress}</p>}
@@ -237,7 +237,7 @@ export default function ConnectButton() {
         type="text"
         size={74}
         value={ethscriptionInitialOwner || ''}
-        placeholder="0x..."
+        placeholder="Recipient address (0x...)"
         onChange={(e) => setEthscriptionInitialOwner(e.target.value)}
         // className="p-2 rounded-md border border-gray-500 focus:outline-none"
       ></Input>
@@ -256,7 +256,7 @@ export default function ConnectButton() {
       <h3 className="text-lg font-semibold">Step 3: Pick a file</h3>
       <FilePickerAndCompressor onCompress={handleCompressedData} />
       
-      <Button className="w-max mx-auto text-4xl" disabled={!!loading || !client || !blobData} onClick={doBlob}>Step 4: Create Blobscription</Button>
+      <Button color="fuchsia" className="w-max mx-auto mt-4" disabled={!!loading || !client || !blobData} onClick={doBlob}>Step 4: Create Blobscription</Button>
       
       {hash && <div>
         <h3>Blob tx sent! Once it has been included in a block, your BlobScription will appear in the list below shortly.</h3>
