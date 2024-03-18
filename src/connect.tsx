@@ -45,6 +45,8 @@ export default function ConnectButton() {
   const [maxFeePerGas, setMaxFeePerGas] = useState<bigint | undefined>(BIGINT_0)
   const [maxPriorityFeePerGas, setMaxPriorityFeePerGas] = useState<bigint | undefined>(BIGINT_0)
   
+  const [ethscriptionInitialOwner, setEthscriptionInitialOwner] = useState<string | null>('')
+  
   useEffect(() => {
     const init = async () => {
       const kzg = await createKZG()
@@ -154,7 +156,7 @@ export default function ConnectButton() {
         // maxFeePerGas: parseGwei('10000'),
         maxFeePerBlobGas: blobGasPrice * 5n,
         // maxFeePerBlobGas: parseGwei('10000'),
-        to: '0x0000000000000000000000000000000000000000',
+        to: ethscriptionInitialOwner,
       });
   
       console.log('Blob Transaction sent successfully!');
@@ -178,10 +180,18 @@ export default function ConnectButton() {
         onChange={(e) => setPrivateKey(e.target.value)}
       ></input>
       
-      <h3>Step 2: Pick a file</h3>
+      <h3>Step 2: Enter the BlobScription's initial owner</h3>
+      <input
+        type="text"
+        size={74}
+        value={ethscriptionInitialOwner || ''}
+        onChange={(e) => setEthscriptionInitialOwner(e.target.value)}
+      ></input>
+      
+      <h3>Step 3: Pick a file</h3>
       <FilePickerAndCompressor onCompress={handleCompressedData} />
       
-      <button className="w-max mx-auto" onClick={doBlob}>Step 3: Create Blobscription</button>
+      <button className="w-max mx-auto" onClick={doBlob}>Step 4: Create Blobscription</button>
       
       {hash && <div>
         <h3>Blob tx sent successfully!</h3>
