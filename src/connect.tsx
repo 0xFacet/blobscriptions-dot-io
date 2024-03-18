@@ -54,8 +54,11 @@ export default function ConnectButton() {
   const [cborData, setCborData] = useState<Uint8Array | null>(null);
   const [blobData, setBlobData] = useState<any>(null);
   const [privateKey, setPrivateKey] = useState<string | null>('')
+  const pkAddress = privateKey && privateKeyToAccount(privateKey as `0x${string}`).address
   
-  const [account, setAccount] = useState<any>()
+  const [publicClient, setPublicClient] = useState<any>(null)
+  
+  const [account, setAccount] = useState<any>(null)
   const [client, setClient] = useState<any>()
   
   const [calldataText, setCalldataText] = useState<string>("")
@@ -100,6 +103,8 @@ export default function ConnectButton() {
       )
       
       setBlobGasPrice(blobGasPrice)
+      
+      setPublicClient(publicClient)
     }
     init()
 
@@ -159,12 +164,20 @@ export default function ConnectButton() {
     }
   }, [compressedData, mimeType]);
   
+  const [waitingForTxSubmission, setWaitingForTxSubmission] = useState(false)
+  
+  const loading = waitingForTxSubmission
+  
   async function doBlob() {
+    setHash('')
+    
     if (!client || !blobData) {
       console.error('No client or blob data');
       return;
     }
+    
     try {
+      setWaitingForTxSubmission(true)
       const hash = await client.sendTransaction({
         blobs: blobData,
         kzg,
@@ -177,13 +190,14 @@ export default function ConnectButton() {
         // maxFeePerBlobGas: parseGwei('10000'),
         to: ethscriptionInitialOwner,
       });
-  
+      setWaitingForTxSubmission(false)
       console.log('Blob Transaction sent successfully!');
       console.log('Transaction hash:', hash);
       setHash(hash);
     } catch (error) {
       console.error('Error sending Blob Transaction:', error);
       setHash('');
+      setWaitingForTxSubmission(false)
     }
   }
 
@@ -204,6 +218,7 @@ export default function ConnectButton() {
       onClick={() => setPrivateKey(generatePrivateKey())}
       className="w-max">Create a burner for me</button>
       
+      <div className="flex flex-col gap-1">
       <input
         type="text"
         size={74}
@@ -212,7 +227,8 @@ export default function ConnectButton() {
         placeholder="0x..."
         className="p-2 rounded-md border border-gray-500 focus:outline-none"
       ></input>
-      
+      {pkAddress && <p className="text-sm">Your burner address is {pkAddress}</p>}
+      </div>
       <h3 className="text-lg font-semibold">Step 2: Enter the BlobScription's initial owner</h3>
       <input
         type="text"
@@ -237,17 +253,17 @@ export default function ConnectButton() {
       <h3 className="text-lg font-semibold">Step 3: Pick a file</h3>
       <FilePickerAndCompressor onCompress={handleCompressedData} />
       
-      <button className="w-max mx-auto" onClick={doBlob}>Step 4: Create Blobscription</button>
+      <button className="w-max mx-auto" disabled={!!loading || !client || !blobData} onClick={doBlob}>Step 4: Create Blobscription</button>
       
       {hash && <div>
-        <h3>Blob tx sent successfully!</h3>
+        <h3>Blob tx sent! Once it has been included in a block, your BlobScription will appear in the list below shortly.</h3>
         <p>
           Tx hash: <a href={`https://sepolia.etherscan.io/tx/${hash}`} target={'_blank'}>{hash}</a>
         </p>
       </div>}
       </div>
-      <div className="mt-16">
-        <h3 className="text-2xl font-semibold">Existing Blobscriptions</h3>
+      <div className="">
+        <h3 className="text-2xl font-semibold my-8">Existing Blobscriptions</h3>
         <AttachmentsList />
       </div>
     </div>
