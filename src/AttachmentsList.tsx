@@ -36,7 +36,7 @@ const AttachmentsList: React.FC = () => {
   }, []);
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-8">
       {items.map((item, index) => (
         <AttachmentViewer key={index} attachmentUrl={`https://sepolia-api-v2.ethscriptions.com${item.attachment_path}`} />
       ))}

@@ -66,7 +66,7 @@ const AttachmentViewer: React.FC<AttachmentViewerProps> = ({ attachmentUrl }) =>
     if (!content) return <div>Error loading content.</div>;
 
     if (contentType.startsWith('image/')) {
-      return <img src={content} alt="Attachment" />;
+      return <img className="w-full" style={{imageRendering: "pixelated"}} src={content} alt="Attachment" />;
     } else if (contentType.startsWith('video/')) {
       return <video src={content} controls />;
     } else if (contentType.startsWith('text/')) {
@@ -77,7 +77,7 @@ const AttachmentViewer: React.FC<AttachmentViewerProps> = ({ attachmentUrl }) =>
   };
 
   return (
-    <div className="max-w-screen-sm mx-auto">
+    <div className="w-full max-w-screen-sm mx-auto">
       {renderContent()}
     </div>
   );

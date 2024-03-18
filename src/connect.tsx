@@ -221,7 +221,7 @@ export default function ConnectButton() {
       <h1 className="text-2xl font-semibold">Create a BlobScription</h1>
       <div className="flex flex-col gap-6">
       <h3 className="text-lg font-semibold">Step 1: Enter a "burner" private key</h3>
-      <p className="">It is not currently possible to create BlobScriptions using a wallet like MetaMask. You must use a private key directly. Create a fresh wallet and send $20 or so to it for gas. Click the button below to do it automatically. Save the private key so you can do multiple BlobScriptions from the same burner.</p>
+      <p className="">It is not currently possible to create BlobScriptions using a wallet like MetaMask. You must use a private key directly. Click the button below to create a fresh wallet. Then send $20 or so to it for gas. Save the private key so you can do multiple BlobScriptions from the same burner.</p>
       <Button
       
       onClick={() => setPrivateKey(generatePrivateKey())}
@@ -243,7 +243,7 @@ export default function ConnectButton() {
         type="text"
         size={74}
         value={ethscriptionInitialOwner || ''}
-        placeholder="Recipient address (0x...)"
+        placeholder="You probably want to put your own address here (0x...)"
         onChange={(e) => setEthscriptionInitialOwner(e.target.value)}
         // className="p-2 rounded-md border border-gray-500 focus:outline-none"
       ></Input>
@@ -272,7 +272,7 @@ export default function ConnectButton() {
       </div>}
       </div>
       <div className="">
-        <h3 className="text-2xl font-semibold my-8">Existing Blobscriptions</h3>
+        <h3 className="text-2xl font-semibold my-8">Existing BlobScriptions</h3>
         <AttachmentsList />
       </div>
     </div>
