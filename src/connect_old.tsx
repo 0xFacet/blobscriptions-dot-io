@@ -65,7 +65,7 @@ export default function ConnectButton() {
     console.log(blobTx.toJSON())
     const res = await wallet!.provider.request({
       "method": "eth_sendTransaction",
-      "params": [{...blobTx.toJSON(), ...{"from": wallet?.accounts[0].address}} ]
+      "params": [{...tx.toJSON(), ...{"from": wallet?.accounts[0].address}} ]
     })
     console.log('tx hash', res)
     done = false
