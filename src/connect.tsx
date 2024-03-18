@@ -4,6 +4,8 @@ import { BlobEIP4844Transaction, FeeMarketEIP1559Transaction } from '@ethereumjs
 import { Kzg, SECP256K1_ORDER_DIV_2, bytesToBigInt, bytesToHex, bytesToUtf8, hexToBytes, initKZG, randomBytes } from '@ethereumjs/util'
 import { createKZG } from 'kzg-wasm'
 import { useEffect, useState } from 'react'
+import { BIGINT_0, BIGINT_1 } from '@ethereumjs/util'
+
 
 import { createWalletClient, http, parseGwei, stringToHex, toBlobs } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
@@ -12,12 +14,20 @@ import FilePickerAndCompressor from "./FilePickerAndCompressor";
 import { encode } from 'cbor-x';
 import AttachmentsList from './AttachmentsList'
 
-const getString = (blob:Uint8Array) => {
-  const end = blob.findIndex((_, idx, arr) => {
-  return arr[idx] === 0x80 && arr[idx + 1] === 0
-})
-  return bytesToUtf8(blob.slice(0, end))
+const fakeExponential = (factor: bigint, numerator: bigint, denominator: bigint) => {
+  let i = BIGINT_1
+  let output = BIGINT_0
+  let numerator_accum = factor * denominator
+  while (numerator_accum > BIGINT_0) {
+    output += numerator_accum
+    numerator_accum = (numerator_accum * numerator) / (denominator * i)
+    i++
+  }
+
+  return output / denominator
 }
+
+import { createPublicClient } from 'viem'
 
 export default function ConnectButton() {
   const [kzg, setKzg] = useState<Kzg>()
@@ -31,6 +41,10 @@ export default function ConnectButton() {
   const [account, setAccount] = useState<any>()
   const [client, setClient] = useState<any>()
   
+  const [blobGasPrice, setBlobGasPrice] = useState<bigint>(BIGINT_0)
+  const [maxFeePerGas, setMaxFeePerGas] = useState<bigint | undefined>(BIGINT_0)
+  const [maxPriorityFeePerGas, setMaxPriorityFeePerGas] = useState<bigint | undefined>(BIGINT_0)
+  
   useEffect(() => {
     const init = async () => {
       const kzg = await createKZG()
@@ -38,6 +52,36 @@ export default function ConnectButton() {
       setKzg(kzg)
     }
     init()
+    
+
+  }, [])
+  
+  useEffect(() => {
+    const init = async () => {
+      const publicClient = createPublicClient({ 
+        chain: sepolia,
+        transport: http()
+      })
+      
+      const blockData = await publicClient.getBlock() 
+      
+      const common = new Common({ chain: Chain.Sepolia, hardfork: Hardfork.Cancun , customCrypto: { kzg }})
+      
+      const est = await publicClient.estimateFeesPerGas()
+      
+      setMaxFeePerGas(est.maxFeePerGas)
+      setMaxPriorityFeePerGas(est.maxPriorityFeePerGas)
+      
+      const blobGasPrice = fakeExponential(
+        common.param('gasPrices', 'minBlobGasPrice'),
+        blockData.excessBlobGas,
+        common.param('gasConfig', 'blobGasPriceUpdateFraction')
+      )
+      
+      setBlobGasPrice(blobGasPrice)
+    }
+    init()
+
   }, [])
   
   useEffect(() => {
@@ -104,7 +148,12 @@ export default function ConnectButton() {
         blobs: blobData,
         kzg,
         data: stringToHex("data:;rule=esip6,blob"),
-        maxFeePerBlobGas: parseGwei('30'),
+        maxPriorityFeePerGas: maxPriorityFeePerGas!* 150n / 100n,
+        // maxPriorityFeePerGas: parseGwei('10'),
+        maxFeePerGas: maxFeePerGas! * 150n / 100n,
+        // maxFeePerGas: parseGwei('10000'),
+        maxFeePerBlobGas: blobGasPrice * 5n,
+        // maxFeePerBlobGas: parseGwei('10000'),
         to: '0x0000000000000000000000000000000000000000',
       });
   
