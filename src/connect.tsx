@@ -5,9 +5,12 @@ import { Kzg, SECP256K1_ORDER_DIV_2, bytesToBigInt, bytesToHex, bytesToUtf8, hex
 import { createKZG } from 'kzg-wasm'
 import { useEffect, useState } from 'react'
 import { BIGINT_0, BIGINT_1 } from '@ethereumjs/util'
+import Markdown from 'react-markdown'
 
 
 import { createWalletClient, http, parseGwei, stringToHex, toBlobs } from 'viem';
+import { generatePrivateKey } from 'viem/accounts'
+
 import { privateKeyToAccount } from 'viem/accounts';
 import { mainnet, sepolia } from 'viem/chains';
 import FilePickerAndCompressor from "./FilePickerAndCompressor";
@@ -29,7 +32,21 @@ const fakeExponential = (factor: bigint, numerator: bigint, denominator: bigint)
 
 import { createPublicClient } from 'viem'
 
+const intro = `
+Blobscriptions are ethscriptions that store additional data using EIP-4844 blobs. Blobs are much cheaper than calldata which makes them an ideal choice for storing large amounts of data on-chain. [Read the technical details of BlobScriptions here](https://docs.ethscriptions.com/esips/esip-8-ethscription-attachments-aka-blobscriptions).
+`
+
+const faq = `
+
+**But I thought blobs disappeared after 18 days!**
+
+While the Ethereum protocol does not guarantee blob data availability beyond 18 days, because so much important data is stored in blobs there will be significant demand outside of ethscriptions for long-term availability solutions. Like IPFS, as long as one copy of the blob data exists, it can be verified and used by anyone, ensuring transparency and auditability.
+
+`
+
 export default function ConnectButton() {
+  const [showFaq, setShowFaq] = useState(false)
+  
   const [kzg, setKzg] = useState<Kzg>()
   const [hash, setHash] = useState<string>('')
   const [compressedData, setCompressedData] = useState(null);
@@ -40,6 +57,8 @@ export default function ConnectButton() {
   
   const [account, setAccount] = useState<any>()
   const [client, setClient] = useState<any>()
+  
+  const [calldataText, setCalldataText] = useState<string>("")
   
   const [blobGasPrice, setBlobGasPrice] = useState<bigint>(BIGINT_0)
   const [maxFeePerGas, setMaxFeePerGas] = useState<bigint | undefined>(BIGINT_0)
@@ -149,7 +168,7 @@ export default function ConnectButton() {
       const hash = await client.sendTransaction({
         blobs: blobData,
         kzg,
-        data: stringToHex("data:;rule=esip6,blob"),
+        data: stringToHex("data:;rule=esip6," + calldataText),
         maxPriorityFeePerGas: maxPriorityFeePerGas!* 150n / 100n,
         // maxPriorityFeePerGas: parseGwei('10'),
         maxFeePerGas: maxFeePerGas! * 150n / 100n,
@@ -169,26 +188,53 @@ export default function ConnectButton() {
   }
 
   return (
-    <div className="flex flex-col gap-8">
-      <h1 className="text-2xl font-semibold">Create a Blobscription!</h1>
+    <div className="flex flex-col gap-4 mt-12">
+      <h1 className="text-2xl font-semibold">Welcome to BlobScriptions!</h1>
+      <Markdown>{intro}</Markdown>
+      <button className="w-max" onClick={() => setShowFaq(i => !i)}>{showFaq ? 'Hide' : 'Show'} FAQ</button>
+      {showFaq && <div>
+        <Markdown>{faq}</Markdown>
+      </div>}
+      <h1 className="text-2xl font-semibold">Create a BlobScription</h1>
       <div className="flex flex-col gap-6">
-      <h3>Step 1: Enter private key</h3>
+      <h3 className="text-lg font-semibold">Step 1: Enter a "burner" private key</h3>
+      <p>It is not currently possible to create BlobScriptions using a wallet like MetaMask. You must use a private key directly. Create a fresh wallet and send $20 or so to it for gas. Click the button below to do it automatically. Save the private key so you can do multiple BlobScriptions from the same burner.</p>
+      <button
+      
+      onClick={() => setPrivateKey(generatePrivateKey())}
+      className="w-max">Create a burner for me</button>
+      
       <input
         type="text"
         size={74}
         value={privateKey || ''}
         onChange={(e) => setPrivateKey(e.target.value)}
+        placeholder="0x..."
+        className="p-2 rounded-md border border-gray-500 focus:outline-none"
       ></input>
       
-      <h3>Step 2: Enter the BlobScription's initial owner</h3>
+      <h3 className="text-lg font-semibold">Step 2: Enter the BlobScription's initial owner</h3>
       <input
         type="text"
         size={74}
         value={ethscriptionInitialOwner || ''}
+        placeholder="0x..."
         onChange={(e) => setEthscriptionInitialOwner(e.target.value)}
+        className="p-2 rounded-md border border-gray-500 focus:outline-none"
       ></input>
       
-      <h3>Step 3: Pick a file</h3>
+      <h4 className="font-semibold">Optional: Enter a message for the calldata</h4>
+      
+      <textarea
+      value={calldataText}
+      onChange={(e) => setCalldataText(e.target.value)}
+      className="p-2 rounded-md border border-gray-500 focus:outline-none w-1/2"
+
+      >
+        
+      </textarea>
+      
+      <h3 className="text-lg font-semibold">Step 3: Pick a file</h3>
       <FilePickerAndCompressor onCompress={handleCompressedData} />
       
       <button className="w-max mx-auto" onClick={doBlob}>Step 4: Create Blobscription</button>
@@ -200,8 +246,8 @@ export default function ConnectButton() {
         </p>
       </div>}
       </div>
-      <div>
-        <h3 className="font-semibold text-lg">Existing Blobscriptions</h3>
+      <div className="mt-16">
+        <h3 className="text-2xl font-semibold">Existing Blobscriptions</h3>
         <AttachmentsList />
       </div>
     </div>
