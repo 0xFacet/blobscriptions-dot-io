@@ -10,6 +10,7 @@ import { privateKeyToAccount } from 'viem/accounts';
 import { mainnet, sepolia } from 'viem/chains';
 import FilePickerAndCompressor from "./FilePickerAndCompressor";
 import { encode } from 'cbor-x';
+import AttachmentsList from './AttachmentsList'
 
 const getString = (blob:Uint8Array) => {
   const end = blob.findIndex((_, idx, arr) => {
@@ -117,7 +118,9 @@ export default function ConnectButton() {
   }
 
   return (
-    <div>
+    <div className="flex flex-col gap-8">
+      <h1 className="text-2xl font-semibold">Create a Blobscription!</h1>
+      <div className="flex flex-col gap-6">
       <h3>Step 1: Enter private key</h3>
       <input
         type="text"
@@ -129,8 +132,7 @@ export default function ConnectButton() {
       <h3>Step 2: Pick a file</h3>
       <FilePickerAndCompressor onCompress={handleCompressedData} />
       
-      <h3>Step 3: Create Blob</h3>
-      <button onClick={doBlob}>Create Blob</button>
+      <button className="w-max mx-auto" onClick={doBlob}>Step 3: Create Blobscription</button>
       
       {hash && <div>
         <h3>Blob tx sent successfully!</h3>
@@ -138,5 +140,10 @@ export default function ConnectButton() {
           Tx hash: <a href={`https://sepolia.etherscan.io/tx/${hash}`} target={'_blank'}>{hash}</a>
         </p>
       </div>}
+      </div>
+      <div>
+        <h3 className="font-semibold text-lg">Existing Blobscriptions</h3>
+        <AttachmentsList />
+      </div>
     </div>
   )}
