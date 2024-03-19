@@ -5,9 +5,10 @@ interface AttachmentViewerProps {
   attachmentUrl: string;
   blobScanUrl: string;
   ethscriptionApiUrl: string;
+  ethscriptionNumber: number;
 }
 
-const AttachmentViewer: React.FC<AttachmentViewerProps> = ({ attachmentUrl, blobScanUrl, ethscriptionApiUrl }) => {
+const AttachmentViewer: React.FC<AttachmentViewerProps> = ({ attachmentUrl, blobScanUrl, ethscriptionApiUrl, ethscriptionNumber }) => {
   // State types are inferred from the initial value, so no changes needed here
   const [content, setContent] = useState<string | null>(null);
   const [contentType, setContentType] = useState<string>('');
@@ -83,7 +84,7 @@ const AttachmentViewer: React.FC<AttachmentViewerProps> = ({ attachmentUrl, blob
       <div className="flex flex-col gap-1">
         {renderContent()}
         <div className="flex justify-between">
-          <a href={ethscriptionApiUrl} target="_blank" rel="noopener noreferrer">View on Ethscriptions API</a>
+          <a href={ethscriptionApiUrl} target="_blank" rel="noopener noreferrer">Ethscription #{ethscriptionNumber}</a>
           <a href={blobScanUrl} target="_blank" rel="noopener noreferrer">View on Blobscan</a>
         </div>
       </div>

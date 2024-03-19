@@ -5,6 +5,7 @@ import AttachmentViewer from './AttachmentViewer'; // Import the AttachmentViewe
 interface AttachmentItem {
   attachment_path: string;
   transaction_hash: string;
+  ethscription_number: number;
 }
 
 const AttachmentsList: React.FC = () => {
@@ -13,7 +14,7 @@ const AttachmentsList: React.FC = () => {
 
   useEffect(() => {
     const fetchAttachments = () => {
-      fetch(`${import.meta.env.VITE_ETHSCRIPTIONS_INDEXER_URL}/ethscriptions?attachments_present=true`)
+      fetch(`${import.meta.env.VITE_ETHSCRIPTIONS_INDEXER_URL}/ethscriptions?attachments_present=true&max_results=50`)
         .then(response => {
           if (!response.ok) {
             throw new Error(`Network response was not ok (${response.statusText})`);
@@ -40,6 +41,7 @@ const AttachmentsList: React.FC = () => {
     <div className="flex flex-col gap-8">
       {items.map((item, index) => (
         <AttachmentViewer key={index}
+        ethscriptionNumber={item.ethscription_number}
         ethscriptionApiUrl={`${import.meta.env.VITE_ETHSCRIPTIONS_INDEXER_URL}/ethscriptions/${item.transaction_hash}`}
         blobScanUrl={`${import.meta.env.VITE_BLOBSCAN_BASE_URL}/tx/${item.transaction_hash}`}
         attachmentUrl={`${import.meta.env.VITE_ETHSCRIPTIONS_INDEXER_URL}${item.attachment_path}`} />
