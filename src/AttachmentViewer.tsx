@@ -3,9 +3,11 @@ import React, { useEffect, useState } from 'react';
 // Define a type for the component props
 interface AttachmentViewerProps {
   attachmentUrl: string;
+  blobScanUrl: string;
+  ethscriptionApiUrl: string;
 }
 
-const AttachmentViewer: React.FC<AttachmentViewerProps> = ({ attachmentUrl }) => {
+const AttachmentViewer: React.FC<AttachmentViewerProps> = ({ attachmentUrl, blobScanUrl, ethscriptionApiUrl }) => {
   // State types are inferred from the initial value, so no changes needed here
   const [content, setContent] = useState<string | null>(null);
   const [contentType, setContentType] = useState<string>('');
@@ -30,6 +32,7 @@ const AttachmentViewer: React.FC<AttachmentViewerProps> = ({ attachmentUrl }) =>
         let contentData: Blob | string;
         if (contentType.startsWith('image/') || contentType.startsWith('video/')) {
           contentData = await response.blob();
+          console.log({contentData})
         } else if (contentType.startsWith('text/')) {
           contentData = await response.text();
         } else {
@@ -66,9 +69,9 @@ const AttachmentViewer: React.FC<AttachmentViewerProps> = ({ attachmentUrl }) =>
     if (!content) return <div>Error loading content.</div>;
 
     if (contentType.startsWith('image/')) {
-      return <img className="w-full" style={{imageRendering: "pixelated"}} src={content} alt="Attachment" />;
+      return <img className="w-full" style={{imageRendering: "pixelated"}} src={attachmentUrl} alt="Attachment" />;
     } else if (contentType.startsWith('video/')) {
-      return <video src={content} controls />;
+      return <video src={attachmentUrl} controls />;
     } else if (contentType.startsWith('text/')) {
       return <pre>{content}</pre>;
     } else {
@@ -78,7 +81,13 @@ const AttachmentViewer: React.FC<AttachmentViewerProps> = ({ attachmentUrl }) =>
 
   return (
     <div className="w-full max-w-screen-sm mx-auto">
-      {renderContent()}
+      <div className="flex flex-col gap-1">
+        {renderContent()}
+        <div className="flex justify-between">
+          <a href={ethscriptionApiUrl} target="_blank" rel="noopener noreferrer">View on Ethscriptions API</a>
+          <a href={blobScanUrl} target="_blank" rel="noopener noreferrer">View on Blobscan</a>
+        </div>
+      </div>
     </div>
   );
 };

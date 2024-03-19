@@ -4,6 +4,7 @@ import AttachmentViewer from './AttachmentViewer'; // Import the AttachmentViewe
 // Define the structure of each attachment item
 interface AttachmentItem {
   attachment_path: string;
+  transaction_hash: string;
 }
 
 const AttachmentsList: React.FC = () => {
@@ -38,7 +39,10 @@ const AttachmentsList: React.FC = () => {
   return (
     <div className="flex flex-col gap-8">
       {items.map((item, index) => (
-        <AttachmentViewer key={index} attachmentUrl={`https://sepolia-api-v2.ethscriptions.com${item.attachment_path}`} />
+        <AttachmentViewer key={index}
+        ethscriptionApiUrl={`https://sepolia-api-v2.ethscriptions.com/ethscriptions/${item.transaction_hash}`}
+        blobScanUrl={`https://sepolia.blobscan.com/tx/${item.transaction_hash}`}
+        attachmentUrl={`https://sepolia-api-v2.ethscriptions.com${item.attachment_path}`} />
       ))}
     </div>
   );

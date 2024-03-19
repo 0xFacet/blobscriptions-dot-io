@@ -214,11 +214,11 @@ export default function ConnectButton() {
     <div className="flex flex-col gap-4 mt-12">
       <h1 className="text-2xl font-semibold">Welcome to BlobScriptions!</h1>
       <Markdown>{intro}</Markdown>
-      <Button className="w-max" onClick={() => setShowFaq(i => !i)}>{showFaq ? 'Hide' : 'Show'} FAQ</Button>
+      {/* <Button className="w-max" onClick={() => setShowFaq(i => !i)}>{showFaq ? 'Hide' : 'Show'} FAQ</Button>
       {showFaq && <div>
         <Markdown>{faq}</Markdown>
-      </div>}
-      <h1 className="text-2xl font-semibold">Create a BlobScription</h1>
+      </div>} */}
+      <h1 className="text-2xl font-semibold">Create a BlobScription (Sepolia-only for now)</h1>
       <div className="flex flex-col gap-6">
       <h3 className="text-lg font-semibold">Step 1: Enter a "burner" private key</h3>
       <p className="">It is not currently possible to create BlobScriptions using a wallet like MetaMask. You must use a private key directly. Click the button below to create a fresh wallet. Then send $20 or so to it for gas. Save the private key so you can do multiple BlobScriptions from the same burner.</p>
