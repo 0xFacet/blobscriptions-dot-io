@@ -92,13 +92,15 @@ export default function ConnectButton() {
   useEffect(() => {
     const init = async () => {
       const publicClient = createPublicClient({ 
-        chain: sepolia,
+        chain: import.meta.env.VITE_NETWORK == "mainnet" ? mainnet : sepolia,
         transport: http()
       })
       
       const blockData = await publicClient.getBlock() 
       
-      const common = new Common({ chain: Chain.Sepolia, hardfork: Hardfork.Cancun , customCrypto: { kzg }})
+      const chain = import.meta.env.VITE_NETWORK == "mainnet" ? Chain.Mainnet : Chain.Sepolia
+      
+      const common = new Common({ chain: chain, hardfork: Hardfork.Cancun , customCrypto: { kzg }})
       
       const est = await publicClient.estimateFeesPerGas()
       
@@ -130,9 +132,9 @@ export default function ConnectButton() {
           const client = createWalletClient({
             account,
             // chain: mainnet,
-            chain: sepolia,
+            chain: import.meta.env.VITE_NETWORK == "mainnet" ? mainnet : sepolia,
             // transport: http("https://ethereum-rpc.publicnode.com"),
-            transport: http("https://eth-sepolia.g.alchemy.com/v2/w9VBEKVyORWDZIHaf8BkrfDNRs92V2jc"),
+            transport: http(import.meta.env.VITE_SEND_BLOB_RPC),
             // transport: http("https://eth-mainnet.g.alchemy.com/v2/w9VBEKVyORWDZIHaf8BkrfDNRs92V2jc"),
           });
           setClient(client);
@@ -157,17 +159,21 @@ export default function ConnectButton() {
   };
   
   useEffect(() => {
-    console.log(compressedData, mimeType)
-    
-    if (mimeType != null && compressedData != null) {
-      const dataObject = {
-        mimetype: mimeType,
-        content: compressedData
-      };
-      const encodedData = encode(dataObject);
-      setCborData(encodedData);
-      setBlobData(toBlobs({ data: encodedData }));
-    } else {
+    try {
+      if (mimeType != null && compressedData != null) {
+        const dataObject = {
+          mimetype: mimeType,
+          content: compressedData
+        };
+        const encodedData = encode(dataObject);
+        setCborData(encodedData);
+        setBlobData(toBlobs({ data: encodedData }));
+      } else {
+        setCborData(null);
+        setBlobData(null);
+      }
+    } catch (error) {
+      alert("Error encoding blob data: " + error)
       setCborData(null);
       setBlobData(null);
     }
@@ -203,8 +209,9 @@ export default function ConnectButton() {
       console.log('Blob Transaction sent successfully!');
       console.log('Transaction hash:', hash);
       setHash(hash);
-    } catch (error) {
+    } catch (error:any) {
       console.error('Error sending Blob Transaction:', error);
+      alert("Error sending Blob Transaction: " + error)
       setHash('');
       setWaitingForTxSubmission(false)
     }
@@ -218,7 +225,7 @@ export default function ConnectButton() {
       {showFaq && <div>
         <Markdown>{faq}</Markdown>
       </div>} */}
-      <h1 className="text-2xl font-semibold">Create a BlobScription (Sepolia-only for now)</h1>
+      <h1 className="text-2xl font-semibold">Create a BlobScription (network: {import.meta.env.VITE_NETWORK})</h1>
       <div className="flex flex-col gap-6">
       <h3 className="text-lg font-semibold">Step 1: Enter a "burner" private key</h3>
       <p className="">It is not currently possible to create BlobScriptions using a wallet like MetaMask. You must use a private key directly. Click the button below to create a fresh wallet. Then send $20 or so to it for gas. Save the private key so you can do multiple BlobScriptions from the same burner.</p>
@@ -267,7 +274,7 @@ export default function ConnectButton() {
       {hash && <div>
         <h3>Blob tx sent! Once it has been included in a block, your BlobScription will appear in the list below shortly.</h3>
         <p>
-          Tx hash: <a href={`https://sepolia.etherscan.io/tx/${hash}`} target={'_blank'}>{hash}</a>
+          Tx hash: <a href={`${import.meta.env.VITE_ETHERSCAN_BASE_URL}/tx/${hash}`} target={'_blank'}>{hash}</a>
         </p>
       </div>}
       </div>

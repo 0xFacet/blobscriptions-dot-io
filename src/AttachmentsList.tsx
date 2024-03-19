@@ -13,7 +13,7 @@ const AttachmentsList: React.FC = () => {
 
   useEffect(() => {
     const fetchAttachments = () => {
-      fetch('https://sepolia-api-v2.ethscriptions.com/ethscriptions?attachments_present=true')
+      fetch(`${import.meta.env.VITE_ETHSCRIPTIONS_INDEXER_URL}/ethscriptions?attachments_present=true`)
         .then(response => {
           if (!response.ok) {
             throw new Error(`Network response was not ok (${response.statusText})`);
@@ -40,9 +40,9 @@ const AttachmentsList: React.FC = () => {
     <div className="flex flex-col gap-8">
       {items.map((item, index) => (
         <AttachmentViewer key={index}
-        ethscriptionApiUrl={`https://sepolia-api-v2.ethscriptions.com/ethscriptions/${item.transaction_hash}`}
-        blobScanUrl={`https://sepolia.blobscan.com/tx/${item.transaction_hash}`}
-        attachmentUrl={`https://sepolia-api-v2.ethscriptions.com${item.attachment_path}`} />
+        ethscriptionApiUrl={`${import.meta.env.VITE_ETHSCRIPTIONS_INDEXER_URL}/ethscriptions/${item.transaction_hash}`}
+        blobScanUrl={`${import.meta.env.VITE_BLOBSCAN_BASE_URL}/tx/${item.transaction_hash}`}
+        attachmentUrl={`${import.meta.env.VITE_ETHSCRIPTIONS_INDEXER_URL}${item.attachment_path}`} />
       ))}
     </div>
   );
