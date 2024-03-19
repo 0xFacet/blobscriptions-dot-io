@@ -32,7 +32,6 @@ const AttachmentViewer: React.FC<AttachmentViewerProps> = ({ attachmentUrl, blob
         let contentData: Blob | string;
         if (contentType.startsWith('image/') || contentType.startsWith('video/')) {
           contentData = await response.blob();
-          console.log({contentData})
         } else if (contentType.startsWith('text/')) {
           contentData = await response.text();
         } else {
