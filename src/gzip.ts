@@ -23,7 +23,7 @@ export const compressDataWithRatioCheck = (
 
     const ratio = uncompressedSize / compressedSize;
 
-    if (ratio > 15) {
+    if (ratio > 10) {
       reject(new Error("Compression ratio exceeds 15:1. Reverting."));
     } else {
       resolve(compressedData);
