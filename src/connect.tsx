@@ -162,7 +162,7 @@ export default function ConnectButton() {
     try {
       if (mimeType != null && compressedData != null) {
         const dataObject = {
-          mimetype: mimeType,
+          contentType: mimeType,
           content: compressedData
         };
         const encodedData = encode(dataObject);
@@ -280,6 +280,7 @@ export default function ConnectButton() {
       </div>
       <div className="">
         <h3 className="text-2xl font-semibold my-8">Existing BlobScriptions</h3>
+        <h3 className="text-lg font-semibold my-8 italic">Note: testnet data was wiped recently as we make final changes before mainnet</h3>
         <AttachmentsList />
       </div>
     </div>
