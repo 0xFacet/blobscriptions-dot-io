@@ -43,6 +43,7 @@ const AttachmentsList: React.FC = () => {
         <AttachmentViewer key={index}
         ethscriptionNumber={item.ethscription_number}
         ethscriptionApiUrl={`${import.meta.env.VITE_ETHSCRIPTIONS_INDEXER_URL}/ethscriptions/${item.transaction_hash}`}
+        ethscriptionDotComUrl={`${import.meta.env.VITE_ETHSCRIPTIONS_DOT_COM_BASE_URL}/ethscriptions/${item.transaction_hash}`}
         blobScanUrl={`${import.meta.env.VITE_BLOBSCAN_BASE_URL}/tx/${item.transaction_hash}`}
         attachmentUrl={`${import.meta.env.VITE_ETHSCRIPTIONS_INDEXER_URL}${item.attachment_path}`} />
       ))}

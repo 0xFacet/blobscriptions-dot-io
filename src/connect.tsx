@@ -57,6 +57,7 @@ export default function ConnectButton() {
   const [cborData, setCborData] = useState<Uint8Array | null>(null);
   const [blobData, setBlobData] = useState<any>(null);
   const [privateKey, setPrivateKey] = useState<string | null>('')
+  const [blockData, setBlockData] = useState<any>(null)
   
   let pkAddress;
   try {
@@ -97,6 +98,8 @@ export default function ConnectButton() {
       })
       
       const blockData = await publicClient.getBlock() 
+      
+      setBlockData(blockData)
       
       const chain = import.meta.env.VITE_NETWORK == "mainnet" ? Chain.Mainnet : Chain.Sepolia
       
@@ -216,7 +219,12 @@ export default function ConnectButton() {
       setWaitingForTxSubmission(false)
     }
   }
-
+  
+  const mainnetStartBlock = 19526000
+  
+  const startBlockPassed = import.meta.env.VITE_NETWORK == "sepolia" ||
+  (blockData && blockData.number >= (mainnetStartBlock - 1))
+  
   return (
     <div className="flex flex-col gap-4 mt-12">
       <h1 className="text-2xl font-semibold">Welcome to BlobScriptions!</h1>
@@ -269,7 +277,9 @@ export default function ConnectButton() {
       <h3 className="text-lg font-semibold">Step 3: Pick a file</h3>
       <FilePickerAndCompressor onCompress={handleCompressedData} />
       
-      <Button color="fuchsia" className="w-max mx-auto mt-4" disabled={!!loading || !client || !blobData} onClick={doBlob}>Step 4: Create Blobscription</Button>
+      { blockData && <Button color="fuchsia" className="w-max mx-auto mt-4" disabled={!!loading || !client || !blobData || !startBlockPassed} onClick={doBlob}>
+        {startBlockPassed ? "Step 4: Create Blobscription" : `Mainnet start block: ${mainnetStartBlock}, current block: ${blockData.number}`}
+      </Button> }
       
       {hash && <div>
         <h3>Blob tx sent! Once it has been included in a block, your BlobScription will appear in the list below shortly.</h3>
@@ -280,7 +290,9 @@ export default function ConnectButton() {
       </div>
       <div className="">
         <h3 className="text-2xl font-semibold my-8">Existing BlobScriptions</h3>
-        <h3 className="text-lg font-semibold my-8 italic">Note: testnet data was wiped recently as we make final changes before mainnet</h3>
+        { import.meta.env.VITE_NETWORK == "mainnet" && <h3 className="text-2xl font-semibold my-8">
+          <a href={`${import.meta.env.VITE_ETHSCRIPTIONS_DOT_COM_BASE_URL}/all?attachments_present=true`} target="_blank">View All on Ethscriptions.com</a>
+        </h3>}
         <AttachmentsList />
       </div>
     </div>
