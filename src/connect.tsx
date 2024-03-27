@@ -200,12 +200,9 @@ export default function ConnectButton() {
         blobs: blobData,
         kzg,
         data: stringToHex("data:;rule=esip6," + calldataText),
-        maxPriorityFeePerGas: maxPriorityFeePerGas!* 150n / 100n,
-        // maxPriorityFeePerGas: parseGwei('10'),
-        maxFeePerGas: maxFeePerGas! * 150n / 100n,
-        // maxFeePerGas: parseGwei('10000'),
-        maxFeePerBlobGas: blobGasPrice * 5n,
-        // maxFeePerBlobGas: parseGwei('10000'),
+        maxPriorityFeePerGas: maxPriorityFeePerGas!* 2n,
+        maxFeePerGas: maxFeePerGas! * 2n,
+        maxFeePerBlobGas: blobGasPrice * 10n,
         to: ethscriptionInitialOwner,
       });
       setWaitingForTxSubmission(false)
