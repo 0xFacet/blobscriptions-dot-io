@@ -78,7 +78,7 @@ const AttachmentViewer: React.FC<AttachmentViewerProps> = ({ attachmentUrl, blob
     } else if (contentType.startsWith('video/')) {
       return <video src={attachmentUrl} controls />;
     } else if (isTextMimetype(contentType)) {
-      return <pre>{content}</pre>;
+      return <pre className="whitspace-pre whitespace-pre-wrap break-all">{content}</pre>;
     } else {
       return <div>Unsupported content type.</div>;
     }
