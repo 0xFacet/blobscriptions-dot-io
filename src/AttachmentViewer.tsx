@@ -34,7 +34,7 @@ const AttachmentViewer: React.FC<AttachmentViewerProps> = ({ attachmentUrl, blob
         let contentData: Blob | string;
         if (contentType.startsWith('image/') || contentType.startsWith('video/')) {
           contentData = await response.blob();
-        } else if (contentType.startsWith('text/')) {
+        } else if (isTextMimetype(contentType)) {
           contentData = await response.text();
         } else {
           throw new Error('Unsupported content type');
@@ -64,7 +64,11 @@ const AttachmentViewer: React.FC<AttachmentViewerProps> = ({ attachmentUrl, blob
       setLoading(false);
     };
   }, [attachmentUrl]);
-
+    
+  function isTextMimetype(mimetype: string) {
+    return mimetype.startsWith('text/') || mimetype.startsWith('application/json')
+  }
+  
   const renderContent = () => {
     if (loading) return <div>Loading...</div>;
     if (!content) return <div>Error loading content.</div>;
@@ -73,7 +77,7 @@ const AttachmentViewer: React.FC<AttachmentViewerProps> = ({ attachmentUrl, blob
       return <img className="w-full" style={{imageRendering: "pixelated"}} src={attachmentUrl} alt="Attachment" />;
     } else if (contentType.startsWith('video/')) {
       return <video src={attachmentUrl} controls />;
-    } else if (contentType.startsWith('text/')) {
+    } else if (isTextMimetype(contentType)) {
       return <pre>{content}</pre>;
     } else {
       return <div>Unsupported content type.</div>;
