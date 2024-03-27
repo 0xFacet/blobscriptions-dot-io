@@ -288,8 +288,9 @@ export default function ConnectButton() {
       <div className="">
         <h3 className="text-2xl font-semibold my-8">Existing BlobScriptions</h3>
         { import.meta.env.VITE_NETWORK == "mainnet" && <h3 className="text-2xl font-semibold my-8">
-          <a href={`${import.meta.env.VITE_ETHSCRIPTIONS_DOT_COM_BASE_URL}/all?attachments_present=true`} target="_blank">View All on Ethscriptions.com</a>
+          <a href={`${import.meta.env.VITE_ETHSCRIPTIONS_DOT_COM_BASE_URL}/all?attachment_present=true`} target="_blank">View All on Ethscriptions.com</a>
         </h3>}
+        
         <AttachmentsList />
       </div>
     </div>
