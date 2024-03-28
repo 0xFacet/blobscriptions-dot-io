@@ -244,9 +244,9 @@ export default function Home() {
       </div>
       <div className="">
         <h3 className="text-2xl font-semibold my-8">Recent BlobScriptions</h3>
-        { import.meta.env.VITE_NETWORK == "mainnet" && <h3 className="text-2xl font-semibold my-8">
+        <h3 className="text-2xl font-semibold my-8">
           <a href={`${import.meta.env.VITE_ETHSCRIPTIONS_DOT_COM_BASE_URL}/all?attachment_present=true`} target="_blank">View All on Ethscriptions.com</a>
-        </h3>}
+        </h3>
         
         <AttachmentsList />
       </div>
